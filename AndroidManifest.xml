@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.teok.android"
+          android:versionCode="1"
+          android:versionName="1.0">
+    <uses-sdk
+            android:minSdkVersion="8"
+            android:targetSdkVersion="17" />
+    <!-- We require OpenGL ES 2.0 -->
+    <uses-feature
+            android:glEsVersion="0x00020000"
+            android:required="true" />
+
+    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher">
+        <activity android:name=".AndroidPalace"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".animation.ShrinkAndFadeInActivity" android:label="@string/anim_shrink_and_fade_in">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".lab.dictionary.DictDemo" android:label="@string/dict">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".lab.zip.AndroidZip" android:label="@string/android_zip">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".opengles.RajawaliTutorial1Activity" android:label="@string/rajawali_tutorial_1">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".opengles.lesson1.LessonOneGettingStarted" android:label="@string/gles_lesson_one">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".opengles.lesson2.LessonTwoActivity" android:label="@string/gles_lesson_two">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".opengles.lesson3.LessonThreeActivity" android:label="@string/gles_lesson_three">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
