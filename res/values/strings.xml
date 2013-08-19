@@ -14,4 +14,5 @@
     <string name="gles_lesson_one">OpenGL ES/Lesson 1:Getting started</string>
     <string name="gles_lesson_two">OpenGL ES/Lesson 2:Ambient and Diffuse lighting</string>
     <string name="gles_lesson_three">OpenGL ES/Lesson 3:Moving to Per-Fragment Lighting</string>
+    <string name="gles_lesson_four">OpenGL ES/Lesson 4:Introducing Basic Texturing</string>
 </resources>

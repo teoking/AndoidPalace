@@ -63,5 +63,11 @@
                 <category android:name="com.teok.android.palace.CODE"/>
             </intent-filter>
         </activity>
+        <activity android:name=".opengles.lesson4.LessonFourActivity" android:label="@string/gles_lesson_four">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
