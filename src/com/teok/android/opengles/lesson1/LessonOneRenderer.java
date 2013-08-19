@@ -78,13 +78,13 @@ public class LessonOneRenderer implements GLSurfaceView.Renderer
 		final float[] triangle1VerticesData = {
 				// X, Y, Z, 
 				// R, G, B, A
-	            -0.5f, -0.25f, 0.0f, 
+	            -0.5f, -0.25f, 0.0f,
 	            1.0f, 0.0f, 0.0f, 1.0f,
-	            
+
 	            0.5f, -0.25f, 0.0f,
 	            0.0f, 0.0f, 1.0f, 1.0f,
-	            
-	            0.0f, 0.559016994f, 0.0f, 
+
+	            0.0f, 0.559016994f, 0.0f,
 	            0.0f, 1.0f, 0.0f, 1.0f};
 		
 		// This triangle is yellow, cyan, and magenta.

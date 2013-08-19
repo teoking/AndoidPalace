@@ -39,12 +39,6 @@
                 <category android:name="com.teok.android.palace.CODE"/>
             </intent-filter>
         </activity>
-        <activity android:name=".opengles.RajawaliTutorial1Activity" android:label="@string/rajawali_tutorial_1">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="com.teok.android.palace.CODE"/>
-            </intent-filter>
-        </activity>
         <activity android:name=".opengles.lesson1.LessonOneGettingStarted" android:label="@string/gles_lesson_one">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
