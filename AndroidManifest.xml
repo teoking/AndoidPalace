@@ -63,7 +63,13 @@
                 <category android:name="com.teok.android.palace.CODE"/>
             </intent-filter>
         </activity>
-        <activity android:name=".opengles.my.DrawBasicGeometry" android:label="@string/gles_my_draw_basics">
+        <activity android:name=".opengles.my.DrawTriangle" android:label="@string/gles_my_draw_triangle">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".opengles.my.DrawFivePointedStar" android:label="@string/gles_my_draw_a_five_pointed_star">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="com.teok.android.palace.CODE"/>

@@ -13,9 +13,9 @@ import java.nio.FloatBuffer;
 
 /**
  */
-public class DrawBasicGeometry extends GLSurfaceViewActivity{
+public class DrawTriangle extends GLSurfaceViewActivity{
 
-    private static final String TAG = "DrawBasicGeometry";
+    private static final String TAG = "DrawTriangle";
 
     /** How many bytes per float. */
     private static final int BYTES_PER_FLOAT = 4;
@@ -27,13 +27,13 @@ public class DrawBasicGeometry extends GLSurfaceViewActivity{
     private final int POSITION_OFFSET = 0;
 
     /** Size of the position data in elements. */
-    private final int POSITION_DATASIZE = 3;
+    private final int POSITION_DATA_SIZE = 3;
 
     /** Offset of the color data. */
     private final int COLOR_OFFSET = 3;
 
     /** Size of the color data in elements. */
-    private final int COLOR_DATASIZE = 4;
+    private final int COLOR_DATA_SIZE = 4;
 
     private FloatBuffer mTriangleFloatBuffer;
 
@@ -78,14 +78,14 @@ public class DrawBasicGeometry extends GLSurfaceViewActivity{
             final float[] triangleVerticesData = {
                     // X, Y, Z,
                     // R, G, B, A
+                    0.0f, 0.5f, 0.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f,
+
                     0.0f, 0.0f, 0.0f,
-                    0.0f, 0,0f, 1.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 1.0f,
 
                     0.5f, 0.5f, 0.0f,
-                    0.0f, 1.0f, 0.0f, 1.0f,
-
-                    0.0f, 0.5f, 0.0f,
-                    1.0f, 0.0f, 0.0f, 1.0f
+                    0.0f, 1.0f, 0.0f, 1.0f
             };
 
 //            // This triangle is red, green, and blue.
@@ -143,7 +143,8 @@ public class DrawBasicGeometry extends GLSurfaceViewActivity{
                             + "{                              \n"
                             + "   v_Color = a_Color;          \n"		// Pass the color through to the fragment shader.
                             // It will be interpolated across the triangle.
-                            + "   gl_Position = a_Position;   \n"     // Multiply the vertex by the matrix to get the final point in
+                            + "   gl_Position = u_MVPMatrix   \n" 	// gl_Position is a special variable used to store the final position.
+                            + "               * a_Position;   \n"     // Multiply the vertex by the matrix to get the final point in
                             + "}                              \n";    // normalized screen coordinates.
 
             final String fragmentShader =
@@ -286,27 +287,27 @@ public class DrawBasicGeometry extends GLSurfaceViewActivity{
 
         private void drawTriangle(final FloatBuffer aTriangleBuffer) {
             aTriangleBuffer.position(POSITION_OFFSET);
-            GLES20.glVertexAttribPointer(mPositionHandle, POSITION_DATASIZE, GLES20.GL_FLOAT, false,
+            GLES20.glVertexAttribPointer(mPositionHandle, POSITION_DATA_SIZE, GLES20.GL_FLOAT, false,
                     STRIDE_BYTES, aTriangleBuffer);
 
             GLES20.glEnableVertexAttribArray(mPositionHandle);
 
             // Pass in the color information
             aTriangleBuffer.position(COLOR_OFFSET);
-            GLES20.glVertexAttribPointer(mColorHandle, COLOR_DATASIZE, GLES20.GL_FLOAT, false,
+            GLES20.glVertexAttribPointer(mColorHandle, COLOR_DATA_SIZE, GLES20.GL_FLOAT, false,
                     STRIDE_BYTES, aTriangleBuffer);
 
             GLES20.glEnableVertexAttribArray(mColorHandle);
 
             // This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
             // (which currently contains model * view).
-//            Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+            Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
 
             // This multiplies the modelview matrix by the projection matrix, and stores the result in the MVP matrix
             // (which now contains model * view * projection).
-//            Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
+            Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
 
-//            GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
+            GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3);
         }
     }
