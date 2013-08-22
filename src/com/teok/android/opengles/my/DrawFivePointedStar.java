@@ -6,10 +6,12 @@ import android.opengl.Matrix;
 import com.teok.android.common.ULog;
 
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.opengles.GL10;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Random;
 
 /**
  */
@@ -18,22 +20,27 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
     private static final String TAG = "DrawFivePointedStar";
 
     /** How many bytes per float. */
-    private static final int BYTES_PER_FLOAT = 4;
+    static final int BYTES_PER_FLOAT = 4;
 
     /** How many elements per vertex. */
-    private final int STRIDE_BYTES = 7 * BYTES_PER_FLOAT;
+    static final int STRIDE_BYTES = 7 * BYTES_PER_FLOAT;
 
     /** Offset of the position data. */
-    private final int POSITION_OFFSET = 0;
+    static final int POSITION_OFFSET = 0;
 
     /** Size of the position data in elements. */
-    private final int POSITION_DATA_SIZE = 3;
+    static final int POSITION_DATA_SIZE = 3;
 
     /** Offset of the color data. */
-    private final int COLOR_OFFSET = 3;
+    static final int COLOR_OFFSET = 3;
 
     /** Size of the color data in elements. */
-    private final int COLOR_DATA_SIZE = 4;
+    static final int COLOR_DATA_SIZE = 4;
+
+    /** The radius of the bigger circle. */
+    static final float RADIUS = 0.5f;
+
+    static final float TH = 3.1415926f / 180;
 
     private FloatBuffer mTriangleFloatBuffer;
 
@@ -67,45 +74,131 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
 
     @Override
     protected GLSurfaceView.Renderer getRenderer() {
-        return new BasicGeometryRender();
+        return new StarRender();
     }
 
-    class BasicGeometryRender implements GLSurfaceView.Renderer {
+    /**
+     * generate a 2d vertex array with the center of (x, y) and radius r. the z value should be always 0.0f.
+     * @param x x of the center point
+     * @param y y of the center point
+     * @param r radius of the bigger circle
+     * @return the 2d vertex array
+     */
+    static float[] generateStarVertex(float x, float y, float r) {
+        float[] vertices = new float[10 * (POSITION_DATA_SIZE + COLOR_DATA_SIZE)];
 
-        public BasicGeometryRender() {
+
+        final Random ran = new Random(1);
+
+        // Inner circle radius
+        float r0 = (float) (r * Math.sin(18 * TH) / Math.cos(36 * TH));
+        ULog.d(TAG, "r0 = " + r0);
+
+        for (int i = 0, k = 0; i < 5; i++) {
+            // point on bigger circle
+            // X, Y, Z
+            // R, G, B, A
+
+            // point on inner circle
+            vertices[k++] = (float) (x + r0 * Math.cos((54 + i * 72) * TH));    // x
+            vertices[k++] = (float) (y - r0 * Math.sin((54 + i * 72) * TH));    // y
+            vertices[k++] = 0.0f;       // z
+            vertices[k++] = ran.nextFloat();    // R
+            vertices[k++] = ran.nextFloat();    // G
+            vertices[k++] = ran.nextFloat();    // B
+            vertices[k++] = 1.0f;
+
+            vertices[k++] = (float) (x + r * Math.cos((90 + i * 72) * TH));     // x
+            vertices[k++] = (float) (y - r * Math.sin((90 + i * 72) * TH));     // y
+            vertices[k++] = 0.0f;       // z value
+            vertices[k++] = ran.nextFloat();    // R
+            vertices[k++] = ran.nextFloat();    // G
+            vertices[k++] = ran.nextFloat();    // B
+            vertices[k++] = 1.0f;               // A
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0, p = 0, c = 0; i < vertices.length; i++) {
+//            if (p < POSITION_DATA_SIZE) {
+//                sb.append(vertices[i]).append(", ");
+//                p++;
+//            } else {
+//                if (c == 0) {
+//                    sb.append("\n");
+//                }
+//
+//                if (c < COLOR_DATA_SIZE) {
+//                    sb.append(vertices[i]).append(", ");
+//                    c++;
+//                } else {
+//                    sb.append("\n");
+//                    p = 0;
+//                    c = 0;
+//                }
+//            }
+            sb.append(vertices[i]).append(", ").append("\n");
+        }
+
+        ULog.d(TAG, "@@ = " + sb.toString());
+
+        return vertices;
+    }
+
+    class StarRender implements GLSurfaceView.Renderer {
+
+        public StarRender() {
 
             // A triangle is blue, green, red
             final float[] starVerticesData = {
                     // X, Y, Z,
                     // R, G, B, A
-                    0.394f, 0.308f, 0.0f,
-                    0.0f, 0.0f, 1.0f, 1.0f,
+                    0.112257004f, -0.1545085f, 0.0f,
+                    0.40743977f, 0.2077148f, 0.036235332f, 1.0f,
 
-                    0.308f, -0.394f, 0.0f,
-                    1.0f, 0.0f, 0.0f, 1.0f,
+                    -2.1855694E-8f, -0.5f, 0.0f,
+                    0.7308782f, 0.100473166f, 0.4100808f, 1.0f,
 
-                    -0.308f, -0.394f, 0.0f,
-                    1.0f, 0.0f, 1.0f, 1.0f,
+                    -0.11225699f, -0.15450852f, 0.0f,
+                    0.7107396f, 0.006117165f, 0.15273619f, 1.0f,
 
-                    -0.394f, 0.308f, 0.0f,
-                    0.0f, 1.0f, 0.0f, 1.0f,
+                    -0.11225699f, -0.15450852f, 0.0f,
+                    0.7107396f, 0.006117165f, 0.15273619f, 1.0f,
 
-                    0.0f, 0.5f, 0.0f,
-                    0.0f, 1.0f, 1.0f, 1.0f
+                    -0.47552824f, -0.15450852f, 0.0f,
+                    0.332717f, 0.6588672f, 0.96775585f, 1.0f,
+
+                    -0.18163563f, 0.05901699f, 0.0f,
+                    0.55407226f, 0.9471949f, 0.9109504f, 1.0f,
+
+                    -0.18163563f, 0.05901699f, 0.0f,
+                    0.55407226f, 0.9471949f, 0.9109504f, 1.0f,
+
+                    -0.2938927f, 0.4045084f, 0.0f,
+                    0.96370476f, 0.15957803f, 0.93986535f, 1.0f,
+
+                    2.2774496E-9f, 0.19098301f, 0.0f,
+                    0.91396284f, 0.34751803f, 0.15933955f, 1.0f,
+
+                    2.2774496E-9f, 0.19098301f, 0.0f,
+                    0.91396284f, 0.34751803f, 0.15933955f, 1.0f,
+
+                    0.29389253f, 0.40450856f, 0.0f,
+                    0.9370821f, 0.48708737f, 0.3971743f, 1.0f,
+
+                    0.18163565f, 0.059016988f, 0.0f,
+                    0.864463f, 0.115967035f, 0.5392596f, 1.0f,
+
+                    0.18163565f, 0.059016988f, 0.0f,
+                    0.864463f, 0.115967035f, 0.5392596f, 1.0f,
+
+                    0.4755283f, -0.15450841f, 0.0f,
+                    0.294057f, 0.36900252f, 0.5064836f, 1.0f,
+
+                    0.112257004f, -0.1545085f, 0.0f,
+                    0.40743977f, 0.2077148f, 0.036235332f, 1.0f,
             };
 
-//            // This triangle is red, green, and blue.
-//            final float[] triangleVerticesData = {
-//                    // X, Y, Z,
-//                    // R, G, B, A
-//                    -0.5f, -0.25f, 0.0f,
-//                    1.0f, 0.0f, 0.0f, 1.0f,
-//
-//                    0.5f, -0.25f, 0.0f,
-//                    0.0f, 0.0f, 1.0f, 1.0f,
-//
-//                    0.0f, 0.559016994f, 0.0f,
-//                    0.0f, 1.0f, 0.0f, 1.0f};
+//            final float[] starVerticesData = generateStarVertex(0.0f, 0.0f, RADIUS);
 
             mTriangleFloatBuffer = ByteBuffer.allocateDirect(starVerticesData.length * BYTES_PER_FLOAT)
                     .order(ByteOrder.nativeOrder()).asFloatBuffer();
@@ -314,7 +407,7 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
             Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
 
             GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
-            GLES20.glDrawArrays(GLES20.GL_LINE_LOOP, 0, 5);
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 15);
         }
     }
 }
