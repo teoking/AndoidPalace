@@ -3,10 +3,10 @@ package com.teok.android.opengles.my;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.SystemClock;
 import com.teok.android.common.ULog;
 
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.opengles.GL10;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -15,42 +15,62 @@ import java.util.Random;
 
 /**
  */
-public class DrawFivePointedStar extends GLSurfaceViewActivity{
+public class DrawFivePointedStar extends GLSurfaceViewActivity {
 
     private static final String TAG = "DrawFivePointedStar";
 
-    /** How many bytes per float. */
+    /**
+     * How many bytes per float.
+     */
     static final int BYTES_PER_FLOAT = 4;
 
-    /** How many elements per vertex. */
+    /**
+     * How many elements per vertex.
+     */
     static final int STRIDE_BYTES = 7 * BYTES_PER_FLOAT;
 
-    /** Offset of the position data. */
+    /**
+     * Offset of the position data.
+     */
     static final int POSITION_OFFSET = 0;
 
-    /** Size of the position data in elements. */
+    /**
+     * Size of the position data in elements.
+     */
     static final int POSITION_DATA_SIZE = 3;
 
-    /** Offset of the color data. */
+    /**
+     * Offset of the color data.
+     */
     static final int COLOR_OFFSET = 3;
 
-    /** Size of the color data in elements. */
+    /**
+     * Size of the color data in elements.
+     */
     static final int COLOR_DATA_SIZE = 4;
 
-    /** The radius of the bigger circle. */
+    /**
+     * The radius of the bigger circle.
+     */
     static final float RADIUS = 0.5f;
 
     static final float TH = 3.1415926f / 180;
 
     private FloatBuffer mTriangleFloatBuffer;
 
-    /** This will be used to pass in the transformation matrix. */
+    /**
+     * This will be used to pass in the transformation matrix.
+     */
     private int mMVPMatrixHandle;
 
-    /** This will be used to pass in model position information. */
+    /**
+     * This will be used to pass in model position information.
+     */
     private int mPositionHandle;
 
-    /** This will be used to pass in model color information. */
+    /**
+     * This will be used to pass in model color information.
+     */
     private int mColorHandle;
 
     /**
@@ -65,10 +85,14 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
      */
     private float[] mModelMatrix = new float[16];
 
-    /** Store the projection matrix. This is used to project the scene onto a 2D viewport. */
+    /**
+     * Store the projection matrix. This is used to project the scene onto a 2D viewport.
+     */
     private float[] mProjectionMatrix = new float[16];
 
-    /** Allocate storage for the final combined matrix. This will be passed into the shader program. */
+    /**
+     * Allocate storage for the final combined matrix. This will be passed into the shader program.
+     */
     private float[] mMVPMatrix = new float[16];
 
 
@@ -79,6 +103,7 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
 
     /**
      * generate a 2d vertex array with the center of (x, y) and radius r. the z value should be always 0.0f.
+     *
      * @param x x of the center point
      * @param y y of the center point
      * @param r radius of the bigger circle
@@ -200,10 +225,24 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
 
 //            final float[] starVerticesData = generateStarVertex(0.0f, 0.0f, RADIUS);
 
+            final byte[] cubeByteVertices = new byte[]{
+                    0, 1, 2, 0, 2, 3,
+                    0, 3, 4, 0, 4, 5,
+                    0, 5, 6, 0, 6, 1,
+                    7, 6, 1, 7, 1, 2,
+                    7, 4, 5, 7, 5, 6,
+                    7, 2, 3, 7, 3, 4
+
+            };
+
             mTriangleFloatBuffer = ByteBuffer.allocateDirect(starVerticesData.length * BYTES_PER_FLOAT)
                     .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
             mTriangleFloatBuffer.put(starVerticesData).position(0);
+
+            float[] lineWidthRange = new float[2];
+            GLES20.glGetFloatv(GLES20.GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange, 0);
+            ULog.d(TAG, "lineWidthRange = [" + lineWidthRange[0] + ", " + lineWidthRange[1] + "]");
         }
 
         @Override
@@ -231,36 +270,35 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
             Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
 
             final String vertexShader =
-                    "uniform mat4 u_MVPMatrix;      \n"		// A constant representing the combined model/view/projection matrix.
+                    "uniform mat4 u_MVPMatrix;      \n"        // A constant representing the combined model/view/projection matrix.
 
-                            + "attribute vec4 a_Position;     \n"		// Per-vertex position information we will pass in.
-                            + "attribute vec4 a_Color;        \n"		// Per-vertex color information we will pass in.
+                            + "attribute vec4 a_Position;     \n"        // Per-vertex position information we will pass in.
+                            + "attribute vec4 a_Color;        \n"        // Per-vertex color information we will pass in.
 
-                            + "varying vec4 v_Color;          \n"		// This will be passed into the fragment shader.
+                            + "varying vec4 v_Color;          \n"        // This will be passed into the fragment shader.
 
-                            + "void main()                    \n"		// The entry point for our vertex shader.
+                            + "void main()                    \n"        // The entry point for our vertex shader.
                             + "{                              \n"
-                            + "   v_Color = a_Color;          \n"		// Pass the color through to the fragment shader.
+                            + "   v_Color = a_Color;          \n"        // Pass the color through to the fragment shader.
                             // It will be interpolated across the triangle.
-                            + "   gl_Position = u_MVPMatrix   \n" 	// gl_Position is a special variable used to store the final position.
+                            + "   gl_Position = u_MVPMatrix   \n"     // gl_Position is a special variable used to store the final position.
                             + "               * a_Position;   \n"     // Multiply the vertex by the matrix to get the final point in
                             + "}                              \n";    // normalized screen coordinates.
 
             final String fragmentShader =
-                    "precision mediump float;       \n"		// Set the default precision to medium. We don't need as high of a
+                    "precision mediump float;       \n"        // Set the default precision to medium. We don't need as high of a
                             // precision in the fragment shader.
-                            + "varying vec4 v_Color;          \n"		// This is the color from the vertex shader interpolated across the
+                            + "varying vec4 v_Color;          \n"        // This is the color from the vertex shader interpolated across the
                             // triangle per fragment.
-                            + "void main()                    \n"		// The entry point for our fragment shader.
+                            + "void main()                    \n"        // The entry point for our fragment shader.
                             + "{                              \n"
-                            + "   gl_FragColor = v_Color;     \n"		// Pass the color directly through the pipeline.
+                            + "   gl_FragColor = v_Color;     \n"        // Pass the color directly through the pipeline.
                             + "}                              \n";
 
             // Load in the vertex shader.
             int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
 
-            if (vertexShaderHandle != 0)
-            {
+            if (vertexShaderHandle != 0) {
                 // Pass in the shader source.
                 GLES20.glShaderSource(vertexShaderHandle, vertexShader);
 
@@ -272,23 +310,20 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
                 GLES20.glGetShaderiv(vertexShaderHandle, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
 
                 // If the compilation failed, delete the shader.
-                if (compileStatus[0] == 0)
-                {
+                if (compileStatus[0] == 0) {
                     GLES20.glDeleteShader(vertexShaderHandle);
                     vertexShaderHandle = 0;
                 }
             }
 
-            if (vertexShaderHandle == 0)
-            {
+            if (vertexShaderHandle == 0) {
                 throw new RuntimeException("Error creating vertex shader.");
             }
 
             // Load in the fragment shader shader.
             int fragmentShaderHandle = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);
 
-            if (fragmentShaderHandle != 0)
-            {
+            if (fragmentShaderHandle != 0) {
                 // Pass in the shader source.
                 GLES20.glShaderSource(fragmentShaderHandle, fragmentShader);
 
@@ -300,23 +335,20 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
                 GLES20.glGetShaderiv(fragmentShaderHandle, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
 
                 // If the compilation failed, delete the shader.
-                if (compileStatus[0] == 0)
-                {
+                if (compileStatus[0] == 0) {
                     GLES20.glDeleteShader(fragmentShaderHandle);
                     fragmentShaderHandle = 0;
                 }
             }
 
-            if (fragmentShaderHandle == 0)
-            {
+            if (fragmentShaderHandle == 0) {
                 throw new RuntimeException("Error creating fragment shader.");
             }
 
             // Create a program object and store the handle to it.
             int programHandle = GLES20.glCreateProgram();
 
-            if (programHandle != 0)
-            {
+            if (programHandle != 0) {
                 // Bind the vertex shader to the program.
                 GLES20.glAttachShader(programHandle, vertexShaderHandle);
 
@@ -335,15 +367,13 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
                 GLES20.glGetProgramiv(programHandle, GLES20.GL_LINK_STATUS, linkStatus, 0);
 
                 // If the link failed, delete the program.
-                if (linkStatus[0] == 0)
-                {
+                if (linkStatus[0] == 0) {
                     GLES20.glDeleteProgram(programHandle);
                     programHandle = 0;
                 }
             }
 
-            if (programHandle == 0)
-            {
+            if (programHandle == 0) {
                 throw new RuntimeException("Error creating program.");
             }
 
@@ -380,7 +410,12 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
             // Clear depth buffer and color buffer
             GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
+            // Do a complete rotation every 10 seconds.
+            long time = SystemClock.uptimeMillis() % 10000L;
+            float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
+
             Matrix.setIdentityM(mModelMatrix, 0);
+            Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 1.0f, 1.0f, 0.0f);
             drawStar(mTriangleFloatBuffer);
         }
 
@@ -409,5 +444,6 @@ public class DrawFivePointedStar extends GLSurfaceViewActivity{
             GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 15);
         }
+
     }
 }

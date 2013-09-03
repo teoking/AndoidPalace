@@ -3,6 +3,7 @@ package com.teok.android.opengles.my;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.SystemClock;
 import com.teok.android.common.ULog;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -13,9 +14,9 @@ import java.nio.FloatBuffer;
 
 /**
  */
-public class DrawTriangle extends GLSurfaceViewActivity{
+public class DrawPrimitives extends GLSurfaceViewActivity{
 
-    private static final String TAG = "DrawTriangle";
+    private static final String TAG = "DrawPrimitives";
 
     /** How many bytes per float. */
     private static final int BYTES_PER_FLOAT = 4;
@@ -36,6 +37,9 @@ public class DrawTriangle extends GLSurfaceViewActivity{
     private final int COLOR_DATA_SIZE = 4;
 
     private FloatBuffer mTriangleFloatBuffer;
+
+    private FloatBuffer mCubeFloatBuffer;
+    private FloatBuffer mCubeColorBuffer;
 
     /** This will be used to pass in the transformation matrix. */
     private int mMVPMatrixHandle;
@@ -101,10 +105,125 @@ public class DrawTriangle extends GLSurfaceViewActivity{
 //                    0.0f, 0.559016994f, 0.0f,
 //                    0.0f, 1.0f, 0.0f, 1.0f};
 
+            // X, Y, Z
+            final float[] cubePositionData =
+                    {
+                            // In OpenGL counter-clockwise winding is default. This means that when we look at a triangle,
+                            // if the points are counter-clockwise we are looking at the "front". If not we are looking at
+                            // the back. OpenGL has an optimization where all back-facing triangles are culled, since they
+                            // usually represent the backside of an object and aren't visible anyways.
+
+                            // Front face
+                            -1.0f, 1.0f, 1.0f,
+                            -1.0f, -1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            -1.0f, -1.0f, 1.0f,
+                            1.0f, -1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+
+                            // Right face
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, -1.0f, 1.0f,
+                            1.0f, 1.0f, -1.0f,
+                            1.0f, -1.0f, 1.0f,
+                            1.0f, -1.0f, -1.0f,
+                            1.0f, 1.0f, -1.0f,
+
+                            // Back face
+                            1.0f, 1.0f, -1.0f,
+                            1.0f, -1.0f, -1.0f,
+                            -1.0f, 1.0f, -1.0f,
+                            1.0f, -1.0f, -1.0f,
+                            -1.0f, -1.0f, -1.0f,
+                            -1.0f, 1.0f, -1.0f,
+
+                            // Left face
+                            -1.0f, 1.0f, -1.0f,
+                            -1.0f, -1.0f, -1.0f,
+                            -1.0f, 1.0f, 1.0f,
+                            -1.0f, -1.0f, -1.0f,
+                            -1.0f, -1.0f, 1.0f,
+                            -1.0f, 1.0f, 1.0f,
+
+                            // Top face
+                            -1.0f, 1.0f, -1.0f,
+                            -1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, -1.0f,
+                            -1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, -1.0f,
+
+                            // Bottom face
+                            1.0f, -1.0f, -1.0f,
+                            1.0f, -1.0f, 1.0f,
+                            -1.0f, -1.0f, -1.0f,
+                            1.0f, -1.0f, 1.0f,
+                            -1.0f, -1.0f, 1.0f,
+                            -1.0f, -1.0f, -1.0f,
+                    };
+
+            // R, G, B, A
+            final float[] cubeColorData =
+                    {
+                            // Front face (red)
+                            1.0f, 0.0f, 0.0f, 1.0f,
+                            1.0f, 0.0f, 0.0f, 1.0f,
+                            1.0f, 0.0f, 0.0f, 1.0f,
+                            1.0f, 0.0f, 0.0f, 1.0f,
+                            1.0f, 0.0f, 0.0f, 1.0f,
+                            1.0f, 0.0f, 0.0f, 1.0f,
+
+                            // Right face (green)
+                            0.0f, 1.0f, 0.0f, 1.0f,
+                            0.0f, 1.0f, 0.0f, 1.0f,
+                            0.0f, 1.0f, 0.0f, 1.0f,
+                            0.0f, 1.0f, 0.0f, 1.0f,
+                            0.0f, 1.0f, 0.0f, 1.0f,
+                            0.0f, 1.0f, 0.0f, 1.0f,
+
+                            // Back face (blue)
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+
+                            // Left face (yellow)
+                            1.0f, 1.0f, 0.0f, 1.0f,
+                            1.0f, 1.0f, 0.0f, 1.0f,
+                            1.0f, 1.0f, 0.0f, 1.0f,
+                            1.0f, 1.0f, 0.0f, 1.0f,
+                            1.0f, 1.0f, 0.0f, 1.0f,
+                            1.0f, 1.0f, 0.0f, 1.0f,
+
+                            // Top face (cyan)
+                            0.0f, 1.0f, 1.0f, 1.0f,
+                            0.0f, 1.0f, 1.0f, 1.0f,
+                            0.0f, 1.0f, 1.0f, 1.0f,
+                            0.0f, 1.0f, 1.0f, 1.0f,
+                            0.0f, 1.0f, 1.0f, 1.0f,
+                            0.0f, 1.0f, 1.0f, 1.0f,
+
+                            // Bottom face (magenta)
+                            1.0f, 0.0f, 1.0f, 1.0f,
+                            1.0f, 0.0f, 1.0f, 1.0f,
+                            1.0f, 0.0f, 1.0f, 1.0f,
+                            1.0f, 0.0f, 1.0f, 1.0f,
+                            1.0f, 0.0f, 1.0f, 1.0f,
+                            1.0f, 0.0f, 1.0f, 1.0f
+                    };
+
             mTriangleFloatBuffer = ByteBuffer.allocateDirect(triangleVerticesData.length * BYTES_PER_FLOAT)
+                    .order(ByteOrder.nativeOrder()).asFloatBuffer();
+            mCubeFloatBuffer = ByteBuffer.allocateDirect(cubePositionData.length * BYTES_PER_FLOAT)
+                    .order(ByteOrder.nativeOrder()).asFloatBuffer();
+            mCubeColorBuffer = ByteBuffer.allocateDirect(cubeColorData.length * BYTES_PER_FLOAT)
                     .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
             mTriangleFloatBuffer.put(triangleVerticesData).position(0);
+            mCubeFloatBuffer.put(cubePositionData).position(0);
+            mCubeColorBuffer.put(cubeColorData).position(0);
         }
 
         @Override
@@ -281,8 +400,18 @@ public class DrawTriangle extends GLSurfaceViewActivity{
             // Clear depth buffer and color buffer
             GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
+            // Do a complete rotation every 10 seconds.
+            long time = SystemClock.uptimeMillis() % 10000L;
+            float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
+
             Matrix.setIdentityM(mModelMatrix, 0);
+            Matrix.translateM(mModelMatrix, 0, -0.5f, -1.0f, 0.0f);
             drawTriangle(mTriangleFloatBuffer);
+
+            Matrix.setIdentityM(mModelMatrix, 0);
+            Matrix.translateM(mModelMatrix, 0, 4.0f, 0.0f, -7.0f);
+            Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 1.0f, 1.0f, 0.0f);
+            drawCube(mCubeFloatBuffer);
         }
 
         private void drawTriangle(final FloatBuffer aTriangleBuffer) {
@@ -309,6 +438,33 @@ public class DrawTriangle extends GLSurfaceViewActivity{
 
             GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3);
+        }
+
+        private void drawCube(final FloatBuffer aCubeFloatBuffer) {
+            aCubeFloatBuffer.position(POSITION_OFFSET);
+            GLES20.glVertexAttribPointer(mPositionHandle, POSITION_DATA_SIZE, GLES20.GL_FLOAT, false,
+                    0, aCubeFloatBuffer);
+
+            GLES20.glEnableVertexAttribArray(mPositionHandle);
+
+            mCubeFloatBuffer.position(0);
+            GLES20.glVertexAttribPointer(mColorHandle, COLOR_DATA_SIZE, GLES20.GL_FLOAT, false,
+                    0, mCubeColorBuffer);
+
+            GLES20.glEnableVertexAttribArray(mColorHandle);
+
+            // This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
+            // (which currently contains model * view).
+            Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+
+            // This multiplies the modelview matrix by the projection matrix, and stores the result in the MVP matrix
+            // (which now contains model * view * projection).
+            Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
+
+
+            GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
+
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36);
         }
     }
 }

@@ -63,7 +63,7 @@
                 <category android:name="com.teok.android.palace.CODE"/>
             </intent-filter>
         </activity>
-        <activity android:name=".opengles.my.DrawTriangle" android:label="@string/gles_my_draw_triangle">
+        <activity android:name=".opengles.my.DrawPrimitives" android:label="@string/gles_my_draw_triangle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="com.teok.android.palace.CODE"/>
