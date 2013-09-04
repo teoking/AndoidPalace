@@ -17,4 +17,5 @@
     <string name="gles_lesson_four">OpenGL ES/Lesson 4: Introducing Basic Texturing</string>
     <string name="gles_my_draw_triangle">OpenGL ES/My: Draw A triangle</string>
     <string name="gles_my_draw_a_five_pointed_star">OpenGL ES/My: Draw 5 pointed start</string>
+    <string name="gles_my_draw_gl_es_impl_info">OpenGL ES/My: GL ES Impl Info</string>
 </resources>
