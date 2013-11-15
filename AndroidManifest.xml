@@ -84,5 +84,11 @@
                 <category android:name="com.teok.android.palace.CODE"/>
             </intent-filter>
         </activity>
+        <activity android:name=".opengles.my.CubePreviewer" android:label="@string/gles_my_draw_cube_previewer">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="com.teok.android.palace.CODE"/>
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
