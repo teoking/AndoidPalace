@@ -6,7 +6,10 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.view.MotionEvent;
+import android.view.View;
 import com.teok.android.R;
+import com.teok.android.common.ULog;
 import com.teok.android.opengles.common.RawResourceReader;
 import com.teok.android.opengles.common.ShaderHelper;
 
@@ -16,7 +19,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-public class CubePreviewer extends GLSurfaceViewActivity {
+public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouchListener {
+
+    private static final String TAG = "CubePreviewer";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -327,5 +332,11 @@ public class CubePreviewer extends GLSurfaceViewActivity {
             Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 1.0f, 0.0f, 0.7f);
             drawCube();
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        ULog.d(TAG, String.format("x=%f, y=%f", event.getRawX(), event.getRawY()));
+        return false;
     }
 }
