@@ -13,7 +13,7 @@ import android.os.Bundle;
  */
 public abstract class GLSurfaceViewActivity extends Activity {
 
-    private GLSurfaceView mGLSurfaceView;
+    protected GLSurfaceView mGLSurfaceView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

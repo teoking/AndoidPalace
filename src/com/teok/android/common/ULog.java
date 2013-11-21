@@ -58,6 +58,12 @@ public class ULog {
         }
     }
 
+    public static void d(String tag, String format, Object... args) {
+        if (DEBUG) {
+            Log.d(APP_TAG, reform(tag, String.format(format, args)));
+        }
+    }
+
     public static void w(String tag, String msg) {
         if (DEBUG) {
             Log.w(APP_TAG, reform(tag, msg));

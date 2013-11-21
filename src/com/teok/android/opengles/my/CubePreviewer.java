@@ -23,13 +23,18 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
 
     private static final String TAG = "CubePreviewer";
 
+    private CubeRenderer mRenderer;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mGLSurfaceView.setOnTouchListener(this);
     }
 
     @Override
     protected GLSurfaceView.Renderer getRenderer() {
-        return new CubeRenderer(this);
+        mRenderer = new CubeRenderer(this);
+        return mRenderer;
     }
 
     class CubeRenderer implements GLSurfaceView.Renderer {
@@ -332,11 +337,55 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
             Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 1.0f, 0.0f, 0.7f);
             drawCube();
         }
+
+        /* Pointer coords */
+        MotionEvent.PointerCoords mP0Coords = new MotionEvent.PointerCoords();
+        MotionEvent.PointerCoords mP1Coords = new MotionEvent.PointerCoords();
+        MotionEvent.PointerCoords mP2Coords = new MotionEvent.PointerCoords();
+
+        /* Historical coords */
+        MotionEvent.PointerCoords mH0Coords = new MotionEvent.PointerCoords();
+        MotionEvent.PointerCoords mH1Coords = new MotionEvent.PointerCoords();
+        MotionEvent.PointerCoords mH2Coords = new MotionEvent.PointerCoords();
+
+        public void onTouchEvent(View v, MotionEvent event) {
+            // Debug
+            ULog.d(TAG, "PointerCount=%s", event.getPointerCount());
+
+            if (event.getAction() != MotionEvent.ACTION_MOVE) {
+                return;
+            }
+
+            switch (event.getPointerCount()) {
+                case 1:
+                    // get coord of first pointer
+                    event.getPointerCoords(0, mP0Coords);
+                    // get last coord of first pointer
+                    if (event.getHistorySize() != 0) {
+                        int historyPos = Math.min(Math.abs(event.getHistorySize() - 1), event.getHistorySize());
+                        event.getHistoricalPointerCoords(0, historyPos, mH0Coords);
+
+                        ULog.d(TAG, "p0(%f, %f) --- lp0(%f, %f)", mP0Coords.x, mP0Coords.y, mH0Coords.x, mH0Coords.y);
+                    }
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                default:
+                    // Not support
+                    break;
+            }
+        }
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         ULog.d(TAG, String.format("x=%f, y=%f", event.getRawX(), event.getRawY()));
-        return false;
+        if (mRenderer != null) {
+            mRenderer.onTouchEvent(v, event);
+        }
+        return true;
     }
+
 }
