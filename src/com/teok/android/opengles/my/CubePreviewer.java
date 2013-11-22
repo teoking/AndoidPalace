@@ -7,6 +7,7 @@ import android.opengl.Matrix;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import com.teok.android.R;
 import com.teok.android.common.ULog;
@@ -86,6 +87,10 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
         private int mProgramHandle;
 
         private Activity mActivityContext;
+
+        private ScaleGestureDetector mScaleDetector;
+
+        private float mScaleFactor = 1.f;
 
         public CubeRenderer(Activity activityContext) {
             mActivityContext = activityContext;
@@ -209,6 +214,8 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
             mCubeColors = ByteBuffer.allocateDirect(cubeColorData.length * BYTES_PER_FLOAT)
                     .order(ByteOrder.nativeOrder()).asFloatBuffer();
             mCubeColors.put(cubeColorData).position(0);
+
+            mScaleDetector = new ScaleGestureDetector(activityContext, new ScaleListener());
         }
 
         protected String getVertexShader() {
@@ -219,19 +226,15 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
             return RawResourceReader.readTextFileFromRawResource(mActivityContext, R.raw.per_pixel_fragment_shader2);
         }
 
-        @Override
-        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            // Set the background clear color to black.
-            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-            // Use culling to remove back faces.
-            GLES20.glEnable(GLES20.GL_CULL_FACE);
+        float xOffset = 0.0f;
+        float yOffset = 0.0f;
+        float zOffset = 0.0f;
+        private final float TOUCH_SCALE_FACTOR = 180.0f / 320 / 2;
 
-            // Enable depth testing
-            GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-
+        private void updateLookAtM() {
             // Position the eye in front of the origin.
-            final float eyeX = 0.0f;
+            final float eyeX = 1.0f;
             final float eyeY = 0.0f;
             final float eyeZ = -0.5f;
 
@@ -249,6 +252,20 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
             // NOTE: In OpenGL 1, a ModelView matrix is used, which is a combination of a model and
             // view matrix. In OpenGL 2, we can keep track of these matrices separately if we choose.
             Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
+        }
+
+        @Override
+        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            // Set the background clear color to black.
+            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+            // Use culling to remove back faces.
+            GLES20.glEnable(GLES20.GL_CULL_FACE);
+
+            // Enable depth testing
+            GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+
+            updateLookAtM();
 
             final String vertexShader = getVertexShader();
             final String fragmentShader = getFragmentShader();
@@ -315,6 +332,10 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
             Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
         }
 
+        float mCubeX = 0.0f;
+        float mCubeY = 0.0f;
+        float mCubeZ = -7.0f;
+
         @Override
         public void onDrawFrame(GL10 gl) {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -333,7 +354,7 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
             mColorHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Color");
 
             Matrix.setIdentityM(mModelMatrix, 0);
-            Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -7.0f);
+            Matrix.translateM(mModelMatrix, 0, mCubeX, mCubeY, mCubeZ * mScaleFactor);
             Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 1.0f, 0.0f, 0.7f);
             drawCube();
         }
@@ -350,7 +371,7 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
 
         public void onTouchEvent(View v, MotionEvent event) {
             // Debug
-            ULog.d(TAG, "PointerCount=%s", event.getPointerCount());
+//            ULog.d(TAG, "PointerCount=%s", event.getPointerCount());
 
             if (event.getAction() != MotionEvent.ACTION_MOVE) {
                 return;
@@ -365,10 +386,22 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
                         int historyPos = Math.min(Math.abs(event.getHistorySize() - 1), event.getHistorySize());
                         event.getHistoricalPointerCoords(0, historyPos, mH0Coords);
 
-                        ULog.d(TAG, "p0(%f, %f) --- lp0(%f, %f)", mP0Coords.x, mP0Coords.y, mH0Coords.x, mH0Coords.y);
+                        // Deltas
+                        float dX = mP0Coords.x - mH0Coords.x;
+                        // Android screen coords is converse with OpenGL
+                        float dY = mH0Coords.y - mP0Coords.y;
+
+                        xOffset = dX;
+                        yOffset = dY;
+
+                        mCubeX += xOffset * TOUCH_SCALE_FACTOR;
+                        mCubeY += yOffset * TOUCH_SCALE_FACTOR;
+
+                        ULog.d(TAG, "posOffset(%f, %f, %f)", xOffset, yOffset, mCubeZ);
                     }
                     break;
                 case 2:
+                    mScaleDetector.onTouchEvent(event);
                     break;
                 case 3:
                     break;
@@ -377,11 +410,25 @@ public class CubePreviewer extends GLSurfaceViewActivity implements View.OnTouch
                     break;
             }
         }
+
+        class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                mScaleFactor *= detector.getScaleFactor();
+
+                // Don't let the object get too small or too large.
+                mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 2.0f));
+
+                ULog.d(TAG, "mScaleFactor=%s, mCubeZ=%s", mScaleFactor, mCubeZ);
+                return true;
+            }
+        }
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        ULog.d(TAG, String.format("x=%f, y=%f", event.getRawX(), event.getRawY()));
+//        ULog.d(TAG, String.format("x=%f, y=%f", event.getRawX(), event.getRawY()));
         if (mRenderer != null) {
             mRenderer.onTouchEvent(v, event);
         }
