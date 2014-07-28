@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.teok.android"
-        minSdkVersion 8
+        minSdkVersion 11
         targetSdkVersion 17
     }
 
@@ -16,4 +16,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+}
+dependencies {
+    compile 'com.android.support:appcompat-v7:19.+'
 }

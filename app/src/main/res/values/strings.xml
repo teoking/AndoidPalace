@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">AndoidPalace</string>
 
     <!-- Animation Area -->
@@ -20,4 +21,8 @@
     <string name="gles_my_draw_gl_es_impl_info">OpenGL ES/My: GL ES Impl Info</string>
     <string name="gles_my_draw_boing">OpenGL ES/My: Boing</string>
     <string name="gles_my_draw_cube_previewer">OpenGL ES/My: Cube Previewer</string>
+    <string name="title_activity_rounded_corners_image">Graphics/Rounded Corners Images</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
 </resources>
