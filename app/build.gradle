@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.teok.android"
         minSdkVersion 11
-        targetSdkVersion 17
+        targetSdkVersion 20
     }
 
     buildTypes {
@@ -18,5 +18,5 @@ android {
     }
 }
 dependencies {
-    compile 'com.android.support:appcompat-v7:19.+'
+    compile 'com.android.support:appcompat-v7:20.0.0'
 }
