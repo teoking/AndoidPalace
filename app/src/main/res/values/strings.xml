@@ -22,6 +22,10 @@
     <string name="gles_my_draw_boing">OpenGL ES/My: Boing</string>
     <string name="gles_my_draw_cube_previewer">OpenGL ES/My: Cube Previewer</string>
     <string name="title_activity_rounded_corners_image">Graphics/Rounded Corners Images</string>
+
+    <!-- Xposed Test -->
+    <string name="show_interpret_log">Xposed/Show Interpret Log</string>
+
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
