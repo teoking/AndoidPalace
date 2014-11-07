@@ -5,6 +5,7 @@
 
     <!-- Animation Area -->
     <string name="anim_shrink_and_fade_in">Animation/ShrinkAndFadeIn</string>
+    <string name="anim_frame_focus_transition">Animation/FrameFocusTransition</string>
 
     <!-- Lab area -->
     <string name="dict">Lab/Dictionary</string>
@@ -23,10 +24,14 @@
     <string name="gles_my_draw_cube_previewer">OpenGL ES/My: Cube Previewer</string>
     <string name="title_activity_rounded_corners_image">Graphics/Rounded Corners Images</string>
 
+    <!-- Widget -->
+    <string name="flow_view_sample">Widget/Flow View</string>
+    <string name="web_view_sample">Widget/WebViewSample</string>
+
     <!-- Xposed Test -->
     <string name="show_interpret_log">Xposed/Show Interpret Log</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_frame_focus">FrameFocusActivity</string>
 
 </resources>

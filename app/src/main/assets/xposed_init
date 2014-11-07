@@ -1,1 +1,2 @@
 com.teok.android.xposed.LoadPackageHookLogger
+com.teok.android.xposed.ShowInterpretLog

@@ -32,6 +32,7 @@ public class InnoLog {
                 try {
                     raf.close();
                 } catch (IOException e) {
+                    // Ignore
                 }
             }
         }
@@ -74,6 +75,7 @@ public class InnoLog {
                 try {
                     br.close();
                 } catch (IOException e) {
+                    // Ignore
                 }
             }
         }

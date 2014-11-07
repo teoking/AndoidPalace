@@ -1,14 +1,18 @@
 package com.teok.android.xposed;
 
 import android.app.Activity;
+import android.app.AndroidAppHelper;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.teok.android.R;
+import com.teoking.xposed.svc.LetvManager;
+import de.robv.android.xposed.XposedBridge;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +25,8 @@ import java.util.List;
  */
 public class ShowInterpretLog extends Activity {
 
+    private static final String TAG = "ShowInterpretLog";
+
     private TextView mTextViewResults;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,10 @@ public class ShowInterpretLog extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO
+                mTextViewResults.append(TAG + ":  proc=" + AndroidAppHelper.currentProcessName() + "\r\n");
+                mTextViewResults.append(TAG + ":  pkg=" + AndroidAppHelper.currentPackageName() + "\r\n");
+                mTextViewResults.append(TAG + ":  model=" + LetvManager.getLetvModel());
+                XposedBridge.log(TAG + ": this is a test call!");
             }
         });
 
