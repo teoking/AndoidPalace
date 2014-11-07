@@ -25,6 +25,7 @@ public class FrameFocusTransitionActivity extends Activity {
     private static final int FRAME_FOCUS_GRADIENT_WIDTH = 52;
 
     private int mActionBarHeight = 0;
+    private boolean isFrameFocusInited = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,27 +89,57 @@ public class FrameFocusTransitionActivity extends Activity {
         float width = anchor.getWidth();
         float height = anchor.getHeight();
 
-        final int realLeft = (int) (left - PADDING - FRAME_FOCUS_GRADIENT_WIDTH / 2);
-        final int realTop = (int) (top - PADDING - mActionBarHeight - FRAME_FOCUS_GRADIENT_WIDTH / 2);
-        final int realWidth = (int) (width + 2 * PADDING + FRAME_FOCUS_GRADIENT_WIDTH);
-        final int realHeight = (int) (height + 2 * PADDING + FRAME_FOCUS_GRADIENT_WIDTH);
+        final float realLeft = (int) (left - PADDING - FRAME_FOCUS_GRADIENT_WIDTH / 2);
+        final float realTop = (int) (top - PADDING - mActionBarHeight - FRAME_FOCUS_GRADIENT_WIDTH / 2);
+        final float realWidth = (int) (width + 2 * PADDING + FRAME_FOCUS_GRADIENT_WIDTH);
+        final float realHeight = (int) (height + 2 * PADDING + FRAME_FOCUS_GRADIENT_WIDTH);
 
         printViewLocation("focused view", anchor);
 
-        // TODO Add transition animation before frame move
+//        // Do animation
+//        // Transition
+//        float fromXDelta = 0,
+//                toXDelta = 0,
+//                fromYDelta = 0,
+//                toYDelta = 0;
+//        frameFocus.getLocationInWindow(position);
+//        if (isFrameFocusInited) {
+//            toXDelta = left - position[0];
+//            toYDelta = top - position[1];
+//        } else {
+//            fromXDelta = position[0];
+//            fromYDelta = position[1];
+//            isFrameFocusInited = true;
+//        }
+//        Animation anim = new TranslateAnimation(fromXDelta, toXDelta, fromYDelta, toYDelta);
+//        anim.setFillAfter(true);
+//        anim.setDuration(300);
+//        anim.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+                frameFocus.setX(realLeft);
+                frameFocus.setY(realTop);
 
-        frameFocus.setX(realLeft);
-        frameFocus.setY(realTop);
+                if (frameFocus.getWidth() != realWidth || frameFocus.getHeight() != realHeight) {
+                    ULog.d(TAG, "frame focus resize...");
+                    ViewGroup.LayoutParams params = frameFocus.getLayoutParams();
+                    params.width = (int) realWidth;
+                    params.height = (int) realHeight;
+                    frameFocus.setLayoutParams(params);
 
-        if (frameFocus.getWidth() != realWidth || frameFocus.getHeight() != realHeight) {
-            ULog.d(TAG, "frame focus resize...");
-            ViewGroup.LayoutParams params = frameFocus.getLayoutParams();
-            params.width = realWidth;
-            params.height = realHeight;
-            frameFocus.setLayoutParams(params);
-
-            printViewLocation("frame focus", frameFocus);
-        }
+                    printViewLocation("frame focus", frameFocus);
+                }
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//            }
+//        });
+//        frameFocus.startAnimation(anim);
     }
 
     private String printViewLocation(String viewName, View view) {
