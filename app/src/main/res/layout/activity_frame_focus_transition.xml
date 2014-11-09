@@ -29,12 +29,12 @@
         </LinearLayout>
     </FrameLayout>
 
-    <View android:layout_width="140dip"
-          android:layout_height="140dip"
+    <View android:layout_width="1dip"
+          android:layout_height="1dip"
           android:background="@drawable/focus_flash_menu_highlight"
           android:id="@+id/frame_focus"
           android:padding="0dp"
-            />
+          android:visibility="invisible" />
 
 
 </FrameLayout>
