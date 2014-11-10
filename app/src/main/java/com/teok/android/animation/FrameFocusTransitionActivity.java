@@ -81,6 +81,7 @@ public class FrameFocusTransitionActivity extends Activity {
         if (!isFrameFocusInited) {
             animToAnchorView(mButton1, mFocus, 100);
             mFocus.setVisibility(View.VISIBLE);
+            isFrameFocusInited = true;
         }
     }
 
