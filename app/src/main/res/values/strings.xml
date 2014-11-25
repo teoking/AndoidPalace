@@ -25,8 +25,7 @@
     <string name="title_activity_rounded_corners_image">Graphics/Rounded Corners Images</string>
 
     <!-- Widget -->
-    <string name="flow_view_sample">Widget/Flow View</string>
-    <string name="web_view_sample">Widget/WebViewSample</string>
+    <string name="title_activity_twoway_view">Widget/TwowayViewActivity</string>
 
     <!-- Xposed Test -->
     <string name="show_interpret_log">Xposed/Show Interpret Log</string>
