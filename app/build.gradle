@@ -1,18 +1,21 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1.0'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.teok.android"
         minSdkVersion 17
         targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
     }
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -20,14 +23,17 @@ android {
 
 repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    mavenCentral()
 }
 
 dependencies {
-    provided files('libs/XposedBridge.jar')
-    compile 'com.android.support:appcompat-v7:21.0.2'
-    compile 'com.android.support:recyclerview-v7:21.0.2'
-    compile 'org.lucasr.twowayview:core:1.0.0-SNAPSHOT@aar'
-    compile 'org.lucasr.twowayview:layouts:1.0.0-SNAPSHOT@aar'
-    compile 'org.roboguice:roboguice:3.+'
-    provided 'org.roboguice:roboblender:3.+'
+    compileOnly files('libs/XposedBridge.jar')
+    implementation 'com.android.support:appcompat-v7:21.0.3'
+    implementation 'com.android.support:recyclerview-v7:21.0.3'
+    implementation 'org.lucasr.twowayview:core:1.0.0-SNAPSHOT@aar'
+    implementation 'org.lucasr.twowayview:layouts:1.0.0-SNAPSHOT@aar'
+    implementation 'org.roboguice:roboguice:3.0.1'
+    compileOnly 'org.roboguice:roboblender:3.0.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    androidTestImplementation 'junit:junit:4.12'
 }
