@@ -1,38 +1,38 @@
 package com.teok.android.widget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import android.widget.Toast;
+
 import com.teok.android.R;
-
 import com.teok.android.common.ULog;
-import org.lucasr.twowayview.widget.TwoWayView;
 
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
+import org.lucasr.twowayview.widget.TwoWayView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TwowayViewActivity extends RoboActivity {
+import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+
+public class TwowayViewActivity extends Activity {
 
     private static final String TAG = TwowayViewActivity.class.getSimpleName();
 
-    @InjectView(R.id.leftAnchor)
+    @BindView(R.id.leftAnchor)
     ImageView mLeftAnchor;
 
-    @InjectView(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     TwoWayView mRecyclerView;
 
-    @InjectView(R.id.rightAnchor)
+    @BindView(R.id.rightAnchor)
     ImageView mRightAnchor;
 
     private List<ItemObject> mData;
