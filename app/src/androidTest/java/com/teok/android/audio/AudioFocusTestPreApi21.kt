@@ -16,7 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class AudioFocusTest {
+class AudioFocusTestPreApi21 {
 
     private lateinit var mAudioManager: AudioManager
     private lateinit var mContext: Context
@@ -86,7 +86,7 @@ class AudioFocusTest {
     }
 
     companion object {
-        const val TAG = "AudioFocusTest"
+        const val TAG = "AudioFocusTestPreApi21"
         const val PLAYER_TAG = "AudioFocusTestPlayer"
     }
 }
