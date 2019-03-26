@@ -33,4 +33,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_frame_focus">FrameFocusActivity</string>
 
+    <!-- TTS -->
+    <string name="tts_google">TTS/Google TTS</string>
+
 </resources>

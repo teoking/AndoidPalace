@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TwoWayViewBase">
-        <item name="android:background">#999999</item>
+    <style name="AppTheme" parent="Base.Theme.AppCompat">
+        <item name="buttonStyle">@style/NormalButton</item>
     </style>
 
-    <style name="TwoWayView" parent="TwoWayViewBase">
-        <item name="android:orientation">horizontal</item>
-        <item name="android:scrollbars">horizontal</item>
-        <item name="android:background">@color/primary_dark_material_dark</item>
+    <style name="NormalButton" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="android:layout_width">300dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginTop">10dp</item>
     </style>
 
 </resources>
