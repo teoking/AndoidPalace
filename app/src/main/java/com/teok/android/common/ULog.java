@@ -2,6 +2,8 @@ package com.teok.android.common;
 
 import android.util.Log;
 
+import timber.log.Timber;
+
 /**
  * An encapsulation of {@link Log} for uniform format of the log output.
  */
@@ -12,67 +14,67 @@ public class ULog {
 
     public static void v(String tag, String msg) {
         if (DEBUG) {
-            Log.v(APP_TAG, reform(tag, msg));
+            Timber.v(reform(tag, msg));
         }
     }
 
     public static void v(String tag, String msg, Throwable tr) {
         if (DEBUG) {
-            Log.v(APP_TAG, reform(tag, msg), tr);
+            Timber.v(tr, reform(tag, msg));
         }
     }
 
     public static void e(String tag, String msg) {
         if (DEBUG) {
-            Log.e(APP_TAG, reform(tag, msg));
+            Timber.tag(APP_TAG).e(reform(tag, msg));
         }
     }
 
     public static void e(String tag, String msg, Throwable tr) {
         if (DEBUG) {
-            Log.e(APP_TAG, reform(tag, msg), tr);
+            Timber.tag(APP_TAG).e(tr, reform(tag, msg));
         }
     }
 
     public static void i(String tag, String msg) {
         if (DEBUG) {
-            Log.i(APP_TAG, reform(tag, msg));
+            Timber.tag(APP_TAG).i(reform(tag, msg));
         }
     }
 
     public static void i(String tag, String msg, Throwable tr) {
         if (DEBUG) {
-            Log.i(APP_TAG, reform(tag, msg));
+            Timber.tag(APP_TAG).i(reform(tag, msg));
         }
     }
 
     public static void d(String tag, String msg) {
         if (DEBUG) {
-            Log.d(APP_TAG, reform(tag, msg));
+            Timber.tag(APP_TAG).d(reform(tag, msg));
         }
     }
 
     public static void d(String tag, String msg, Throwable tr) {
         if (DEBUG) {
-            Log.d(APP_TAG, reform(tag, msg), tr);
+            Timber.tag(APP_TAG).d(tr, reform(tag, msg));
         }
     }
 
     public static void d(String tag, String format, Object... args) {
         if (DEBUG) {
-            Log.d(APP_TAG, reform(tag, String.format(format, args)));
+            Timber.tag(tag).d(format, args);
         }
     }
 
     public static void w(String tag, String msg) {
         if (DEBUG) {
-            Log.w(APP_TAG, reform(tag, msg));
+            Timber.tag(APP_TAG).w(reform(tag, msg));
         }
     }
 
     public static void w(String tag, String msg, Throwable tr) {
         if (DEBUG) {
-            Log.w(APP_TAG, reform(tag, msg), tr);
+            Timber.tag(APP_TAG).w(tr, reform(tag, msg));
         }
     }
 
